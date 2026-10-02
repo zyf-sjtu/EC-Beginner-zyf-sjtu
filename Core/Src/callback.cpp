@@ -4,20 +4,12 @@
 #include "main.h"
 #include "usart.h"
 
-extern uint8_t rxmessage[1];
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+uint8_t rxmessage[1];
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
-    if (huart==&huart1)
+    if (huart==&huart1&&(HAL_UARTEx_GetRxEventType(&huart1)==HAL_UART_RXEVENT_IDLE||HAL_UARTEx_GetRxEventType(huart)==HAL_UART_RXEVENT_TC))
     {
-        if (rxmessage[0]=='R')
-        {
-            HAL_GPIO_WritePin(LED_B_GPIO_Port, LED_B_Pin, GPIO_PIN_RESET);
-        }
-        else if (rxmessage[0]=='M')
-        {
-            HAL_GPIO_WritePin(LED_B_GPIO_Port, LED_B_Pin, GPIO_PIN_SET);
-        }
-
-            HAL_UART_Receive_IT(&huart1, rxmessage, 1);
+        HAL_UART_Transmit_IT(&huart1,rxmessage,Size);
+        HAL_UARTEx_ReceiveToIdle_DMA(&huart1,rxmessage,10);
     }
 }
