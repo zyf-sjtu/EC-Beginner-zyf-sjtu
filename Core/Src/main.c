@@ -41,8 +41,8 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-#define AMPERES 0.5f
 #define MOTOR_ID 1
+#define ANGLE_REF 30.0f
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -104,8 +104,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    UsersetTxCurrent(AMPERES, MOTOR_ID);
-    HAL_Delay(1);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -159,15 +157,22 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  if (htim==&htim6)
+  {
+    UsersetTxCurrent(MOTOR_ID,ANGLE_REF);
+  }
+}
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
 
   if (hcan==&hcan1)
   {
     uint8_t rx_data[8];
-    memcpy(debug_rx_data,rx_data,8);
     if (HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &rx_header, rx_data) == HAL_OK)
     {
+      memcpy(debug_rx_data,rx_data,8);
       UsercanRxMsgCallback((const uint8_t*)rx_data);
     }
 

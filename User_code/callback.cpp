@@ -7,15 +7,15 @@
 //调用一个函数完成解包
 #include "can.h"
 #include "Motor.hpp"
+PID ppid(65.0f,0.0f,0.0f,0.0f,1000.0f,0.1f);
+PID spid(30.0f,0.0f,50.0f,0.0f,16384.0f,0.05f);
 
-Motor motor(19.0f);
+Motor motor(Motor::M2006,36.0f,Motor::POSITION_SPEED,ppid,spid);
 
 extern "C" void UsercanRxMsgCallback(const uint8_t* rxdata){
     motor.canRxMsgCallback(rxdata);
 }
-extern "C" void UsersetTxCurrent(float amperes, uint8_t motor_id)
+extern "C" void UsersetTxCurrent(uint8_t motor_id,float angle_ref)
 {
-    motor.setTxCurrent(amperes,motor_id);
+    motor.setTxIntensity(motor_id,angle_ref);
 }
-
-

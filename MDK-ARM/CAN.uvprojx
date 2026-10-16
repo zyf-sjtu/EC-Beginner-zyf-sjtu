@@ -439,6 +439,11 @@
               <FileType>8</FileType>
               <FilePath>..\User_code\Motor.cpp</FilePath>
             </File>
+            <File>
+              <FileName>PID.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\User_code\PID.cpp</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

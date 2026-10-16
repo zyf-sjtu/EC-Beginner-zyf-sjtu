@@ -36,6 +36,10 @@ add_executable(${CMAKE_PROJECT_NAME}
         User_code/can_user.h
         User_code/callback.cpp
         User_code/Motor.cpp
+        User_code/callback.h
+        User_code/PID.cpp
+        User_code/can_user.c
+        User_code/can_user.h
         User_code/callback.h)
 
 # Add STM32CubeMX generated sources

@@ -7,10 +7,11 @@
 #define CAN_CALLBACK_H
 
 #ifdef __cplusplus
+
 extern "C" {
 #endif
 void UsercanRxMsgCallback(const uint8_t* rxdata);
-void UsersetTxCurrent(float amperes, uint8_t motor_id);
+void UsersetTxCurrent(uint8_t motor_id,float angle_ref);
 #ifdef __cplusplus
 }
 #endif
