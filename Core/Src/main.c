@@ -42,7 +42,7 @@
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
 #define MOTOR_ID 1
-#define ANGLE_REF 30.0f
+float angle_ref=30.0;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -161,7 +161,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   if (htim==&htim6)
   {
-    UsersetTxCurrent(MOTOR_ID,ANGLE_REF);
+    UsersetTxCurrent(MOTOR_ID,angle_ref);
   }
 }
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)

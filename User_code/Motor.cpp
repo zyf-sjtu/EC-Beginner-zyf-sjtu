@@ -39,7 +39,7 @@ void Motor::handleIntensity(float angle_ref)
             }
     case SPEED:
         {
-            intensity_float_=spid_.calc(0.0f,speed_) + feedforward_intensity_;
+            intensity_float_=spid_.calc(speed_ref_,speed_) + feedforward_intensity_;
             break;
         }
         default:break;

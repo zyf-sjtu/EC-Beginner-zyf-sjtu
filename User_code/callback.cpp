@@ -7,8 +7,8 @@
 //调用一个函数完成解包
 #include "can.h"
 #include "Motor.hpp"
-PID ppid(65.0f,0.0f,0.0f,0.0f,1000.0f,0.1f);
-PID spid(30.0f,0.0f,50.0f,0.0f,16384.0f,0.05f);
+PID ppid(20.0f,0.0f,0.5f,0.0f,1000.0f,0.1f);
+PID spid(20.0f,0.0f,0.0f,0.0f,16384.0f,0.05f);
 
 Motor motor(Motor::M2006,36.0f,Motor::POSITION_SPEED,ppid,spid);
 

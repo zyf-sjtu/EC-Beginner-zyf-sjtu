@@ -58,6 +58,7 @@ private:
     float feedforward_intensity_=10;
     float kp_feedforward_intensity_=0;
     float kp_feedforward_speed_=0;
+    volatile float speed_ref_=0;
     void handleIntensity(float angle_ref);
     void RxDecode(const uint8_t* rx_data_);
 
