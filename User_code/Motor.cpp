@@ -8,7 +8,7 @@
 // Created by zyfsj on 2026/10/3.
 //
 
-volatile float g_ff_gain=0.1*9.8*0.065/0.18;//负载重力*g*力臂长度/转矩常数
+volatile float g_ff_gain=0.1*9.8*0.065/0.18;
 
 Motor::Motor(Motortype motortype,float ratio,ControlMode mode,PID ppid,PID spid):
 motor_type_(motortype),ratio_(ratio),control_mode_(mode),ppid_(ppid),spid_(spid){;}

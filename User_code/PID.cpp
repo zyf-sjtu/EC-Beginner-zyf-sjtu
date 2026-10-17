@@ -2,8 +2,8 @@
 // Created by zyfsj on 2026/10/11.
 //
 #include "PID.h"
-PID::PID(float kp, float ki, float kd,float i_max,float out_max,float d_fliter_k):
-kp_(kp),ki_(ki),kd_(kd),i_max_(i_max),out_max_(out_max),d_fliter_k_(d_fliter_k)
+PID::PID(float kp, float ki, float kd,float sum_max,float out_max,float d_fliter_k):
+kp_(kp),ki_(ki),kd_(kd),sum_max_(sum_max),out_max_(out_max),d_fliter_k_(d_fliter_k)
 {
     err_=0;
     err_sum_=0;
@@ -29,9 +29,9 @@ float PID::calc(float ref,float fdb)
     err_sum_=err_+err_sum_;
     pout_=kp_*err_;
     dout_=kd_*(err_-last_err_);
+    if (err_sum_>sum_max_) err_sum_=sum_max_;
+    if (err_sum_<-sum_max_) err_sum_=-sum_max_;
     iout_=ki_*err_sum_;
-    if (iout_>i_max_) iout_=i_max_;
-    if (iout_<-i_max_) iout_=-i_max_;
     dout_=(1-d_fliter_k_)*last_dout_+d_fliter_k_*dout_;
     last_err_=err_;
     last_dout_=dout_;

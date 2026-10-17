@@ -8,13 +8,13 @@
 class PID
 {
 public:
-    PID(float kp, float ki, float kd,float i_max,float out_max,float d_fliter_k);
+    PID(float kp, float ki, float kd,float sum_max,float out_max,float d_fliter_k);
    void reset();
     float calc(float ref,float fdb);
     float kp_;
     float ki_;
     float kd_;
-    float i_max_;
+    float sum_max_;
     float out_max_;
     float d_fliter_k_;
     float ref_;
