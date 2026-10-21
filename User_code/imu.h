@@ -39,14 +39,18 @@ class IMU
     volatile float acc_sensor_[3];
     volatile float gyro_sensor_[3];
     float acc_sen_=1.0f;
-    float gyro_bias_[3];
-    float acc_bias_[3];
+    float gyro_bias_[3]={0.0f, 0.0f, 0.0f};
+    float acc_bias_[3]={0.0f, 0.0f, 0.0f};
+    float roll_=0.0f;
+    float pitch_=0.0f;
+    float yaw_=0.0f;
     volatile float q_[4]={1.0f, 0.0f, 0.0f, 0.0f};
     volatile float dq_[4]={0.0f, 0.0f, 0.0f, 0.0f};
     float dt_=0.001;
     void decode(void);
     void calc(void);
     void sensorDataTransform(void);
+    void getEulerAngles(void);
 
 };
 

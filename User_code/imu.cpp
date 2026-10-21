@@ -6,6 +6,9 @@
 #include <string.h>
 #include "user_code.h"
 #include <cmath>
+#include <math.h>
+
+#define MY_PI 3.14159265358979323846f
 
 IMU::IMU(){;}
 void IMU::reset()
@@ -30,6 +33,7 @@ void IMU::handleSensor()
     decode();
     calc();
     sensorDataTransform();
+    getEulerAngles();
 }
 bool IMU::hasfeedback()
 {
@@ -69,21 +73,54 @@ void IMU::decode()
 }
 void IMU::calc()
 {
-    acc_x_int_=(int16_t)(ACC_X_LSB_|(ACC_X_MSB_<<8));
-    acc_y_int_=(int16_t)(ACC_Y_LSB_|(ACC_Y_MSB_<<8));
-    acc_z_int_=(int16_t)(ACC_Z_LSB_|(ACC_Z_MSB_<<8));
-    gyro_x_int_=(int16_t)(RATE_X_LSB_|(RATE_X_MSB_<<8));
-    gyro_y_int_=(int16_t)(RATE_Y_LSB_|(RATE_Y_MSB_<<8));
-    gyro_z_int_=(int16_t)(RATE_Z_LSB_|(RATE_Z_MSB_<<8));
-    acc_[0]=(float)acc_x_int_/65536.0f*6.0f*9.8f;
-    acc_[1]=(float)acc_y_int_/65536.0f*6.0f*9.8f;
-    acc_[2]=(float)acc_z_int_/65536.0f*6.0f*9.8f;
-    gyro_[0]=(float)gyro_x_int_/65536.0f*2000.0f/180*3.14;
-    gyro_[1]=(float)gyro_y_int_/65536.0f*2000.0f/180*3.14;
-    gyro_[2]=(float)gyro_z_int_/65536.0f*2000.0f/180*3.14;
+    acc_x_int_=(int16_t)(ACC_X_LSB_|((uint16_t)ACC_X_MSB_<<8));
+    acc_y_int_=(int16_t)(ACC_Y_LSB_|((uint16_t)ACC_Y_MSB_<<8));
+    acc_z_int_=(int16_t)(ACC_Z_LSB_|((uint16_t)ACC_Z_MSB_<<8));
+    gyro_x_int_=(int16_t)(RATE_X_LSB_|((uint16_t)RATE_X_MSB_<<8));
+    gyro_y_int_=(int16_t)(RATE_Y_LSB_|((uint16_t)RATE_Y_MSB_<<8));
+    gyro_z_int_=(int16_t)(RATE_Z_LSB_|((uint16_t)RATE_Z_MSB_<<8));
+    acc_[0]=(float)acc_x_int_/32768.0f*6.0f*9.8f;
+    acc_[1]=(float)acc_y_int_/32768.0f*6.0f*9.8f;
+    acc_[2]=(float)acc_z_int_/32768.0f*6.0f*9.8f;
+    gyro_[0]=(float)gyro_x_int_/32768.0f*2000.0f/180*MY_PI;
+    gyro_[1]=(float)gyro_y_int_/32768.0f*2000.0f/180*MY_PI;
+    gyro_[2]=(float)gyro_z_int_/32768.0f*2000.0f/180*MY_PI;
 }
 
-void IMU::sensorDataTransform(void){
+void IMU::getEulerAngles()
+{
+    float w = q_[0], x = q_[1], y = q_[2], z = q_[3];
+    float xx = x * x, yy = y * y, zz = z * z;
+    float xy = x * y, xz = x * z, yz = y * z;
+    float wx = w * x, wy = w * y, wz = w * z;
+
+    float R[3][3];
+    R[0][0] = 1.0f - 2.0f * (yy + zz);
+    R[0][1] = 2.0f * (xy - wz);
+    R[0][2] = 2.0f * (xz + wy);
+
+    R[1][0] = 2.0f * (xy + wz);
+    R[1][1] = 1.0f - 2.0f * (xx + zz);
+    R[1][2] = 2.0f * (yz - wx);
+
+    R[2][0] = 2.0f * (xz - wy);
+    R[2][1] = 2.0f * (yz + wx);
+    R[2][2] = 1.0f - 2.0f * (xx + yy);
+    float sinp = -R[2][0];
+    if (fabsf(sinp) >= 1.0f) {
+        pitch_ = copysignf(3.14159265f / 2.0f, sinp); // 限制在 ±90度
+    } else {
+        pitch_ = asinf(sinp);
+    }
+
+    // 2. Roll (X轴) - 使用 atan2，能自动处理四个象限
+    roll_ = atan2f(R[2][1], R[2][2]);
+
+    // 3. Yaw (Z轴) - 同样使用 atan2
+    yaw_ = atan2f(R[1][0], R[0][0]);
+}
+
+void IMU::sensorDataTransform(){
     for (uint8_t i = 0; i < 3; i++) {
         gyro_sensor_[i] = gyro_[0] * R_imu_[i][0] +
                           gyro_[1] * R_imu_[i][1] +
@@ -94,12 +131,12 @@ void IMU::sensorDataTransform(void){
     }
 }
 
-void IMU::updateQuaternion(void)
+void IMU::updateQuaternion()
 {
     float half_dt=0.5f*dt_;
     // dq = 0.5 * q ⊗ (0, w)
     dq_[0] = (-q_[1] * gyro_sensor_[0] - q_[2] * gyro_sensor_[1] - q_[3] * gyro_sensor_[2]) * half_dt;
-    dq_[1] = ( q_[0] * gyro_sensor_[1] + q_[2] * gyro_sensor_[2] - q_[3] * gyro_sensor_[1]) * half_dt;
+    dq_[1] = ( q_[0] * gyro_sensor_[0] + q_[2] * gyro_sensor_[2] - q_[3] * gyro_sensor_[1]) * half_dt;
     dq_[2] = ( q_[0] * gyro_sensor_[1] - q_[1] * gyro_sensor_[2] + q_[3] * gyro_sensor_[0]) * half_dt;
     dq_[3] = ( q_[0] * gyro_sensor_[2] + q_[1] * gyro_sensor_[1] - q_[2] * gyro_sensor_[0]) * half_dt;
 
