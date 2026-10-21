@@ -1,0 +1,17 @@
+//
+// Created by zyfsj on 2026/10/20.
+//
+#include "user_code.h"
+#include "imu.h"
+#ifndef IMU_CALLBACK_H
+#define IMU_CALLBACK_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+    void userCallback();
+#ifdef __cplusplus
+}
+#endif
+
+#endif //IMU_CALLBACK_H
