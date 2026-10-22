@@ -1,5 +1,5 @@
 imu/callback.o: ..\User_code\callback.cpp ..\User_code\callback.h \
-  ..\User_code\user_code.h ..\Core\Inc\main.h \
+  ..\User_code\bmi088.h ..\Core\Inc\main.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h \
   ..\Core\Inc\stm32f4xx_hal_conf.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rcc.h \

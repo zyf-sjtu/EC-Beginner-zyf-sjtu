@@ -4,13 +4,13 @@
 
 #include "imu.h"
 #include <string.h>
-#include "user_code.h"
+#include "bmi088.h"
 #include <cmath>
 #include <math.h>
 
 #define MY_PI 3.14159265358979323846f
 
-IMU::IMU(){;}
+IMU::IMU(float alpha):alpha_(alpha){;}
 void IMU::reset()
 {
     memset(acc_data_,0,6);
@@ -33,7 +33,10 @@ void IMU::handleSensor()
     decode();
     calc();
     sensorDataTransform();
-    getEulerAngles();
+    updateQuaternion();
+    getGyroAngles();
+    getAccAngles();
+    complementaryFilter();
 }
 bool IMU::hasfeedback()
 {
@@ -87,7 +90,7 @@ void IMU::calc()
     gyro_[2]=(float)gyro_z_int_/32768.0f*2000.0f/180*MY_PI;
 }
 
-void IMU::getEulerAngles()
+void IMU::getGyroAngles()
 {
     float w = q_[0], x = q_[1], y = q_[2], z = q_[3];
     float xx = x * x, yy = y * y, zz = z * z;
@@ -108,16 +111,36 @@ void IMU::getEulerAngles()
     R[2][2] = 1.0f - 2.0f * (xx + yy);
     float sinp = -R[2][0];
     if (fabsf(sinp) >= 1.0f) {
-        pitch_ = copysignf(3.14159265f / 2.0f, sinp); // 限制在 ±90度
+        pitch_gyro_ = copysignf(3.14159265f / 2.0f, sinp); // 限制在 ±90度
     } else {
-        pitch_ = asinf(sinp);
+        pitch_gyro_ = asinf(sinp);
     }
 
     // 2. Roll (X轴) - 使用 atan2，能自动处理四个象限
-    roll_ = atan2f(R[2][1], R[2][2]);
+    roll_gyro_ = atan2f(R[2][1], R[2][2]);
 
     // 3. Yaw (Z轴) - 同样使用 atan2
-    yaw_ = atan2f(R[1][0], R[0][0]);
+    yaw_gyro_ = atan2f(R[1][0], R[0][0]);
+}
+
+void IMU::getAccAngles()
+{
+    float ax = acc_sensor_[0];
+    float ay = acc_sensor_[1];
+    float az = acc_sensor_[2];
+
+    // 保护机制：防止数据全为0或者开出负数
+    float norm = sqrt(ax * ax + ay * ay + az * az);
+    if (norm == 0.0f) return;
+
+    // 1. 计算 Roll (横滚角)
+    // 使用 atan2(y, x) 形式，直接得出弧度值
+    roll_accel_ = atan2f(ay, az);
+
+    // 2. 计算 Pitch (俯仰角)
+    // 先算出 YZ 平面上的投影长度
+    float yz_norm = sqrtf(ay * ay + az * az);
+    pitch_accel_ = atan2f(-ax, yz_norm);
 }
 
 void IMU::sensorDataTransform(){
@@ -150,4 +173,11 @@ void IMU::updateQuaternion()
     {
         q_[i] /= mod;
     }
+}
+
+void IMU::complementaryFilter()
+{
+    yaw_=yaw_gyro_;
+    pitch_=alpha_*(pitch_+dt_*gyro_sensor_[1])+(1-alpha_)*pitch_accel_;
+    roll_=alpha_*(roll_+dt_*gyro_sensor_[0])+(1-alpha_)*roll_accel_;
 }

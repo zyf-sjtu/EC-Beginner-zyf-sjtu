@@ -24,7 +24,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "user_code.h"
+#include "bmi088.h"
 extern void userCallback(void);
 /* USER CODE END Includes */
 

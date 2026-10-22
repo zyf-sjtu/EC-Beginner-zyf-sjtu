@@ -4,9 +4,9 @@
 
 #include "callback.h"
 #include "IMU.h"
-#include "user_code.h"
+#include "bmi088.h"
 
-IMU imu;
+IMU imu(0.8);
 extern "C" void userCallback()
 {
     imu.handleSensor();

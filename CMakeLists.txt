@@ -33,8 +33,8 @@ enable_language(C ASM)
 
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME}
-        User_code/user_code.cpp
-        User_code/user_code.h
+        User_code/bmi088.cpp
+        User_code/bmi088.h
         User_code/imu.cpp
         User_code/imu.h
         User_code/callback.cpp

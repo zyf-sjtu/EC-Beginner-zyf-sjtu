@@ -8,7 +8,7 @@
 class IMU
 {
     public:
-    explicit IMU(void);
+    explicit IMU(float alpha);
     void reset(void);
     void handleSensor(void);
     void updateQuaternion(void);
@@ -41,16 +41,24 @@ class IMU
     float acc_sen_=1.0f;
     float gyro_bias_[3]={0.0f, 0.0f, 0.0f};
     float acc_bias_[3]={0.0f, 0.0f, 0.0f};
-    float roll_=0.0f;
-    float pitch_=0.0f;
+    float roll_gyro_=0.0f;
+    float pitch_gyro_=0.0f;
+    float yaw_gyro_=0.0f;
+    float roll_accel_=0.0f;
+    float pitch_accel_=0.0f;
     float yaw_=0.0f;
+    float pitch_=0.0f;
+    float roll_=0.0f;
     volatile float q_[4]={1.0f, 0.0f, 0.0f, 0.0f};
     volatile float dq_[4]={0.0f, 0.0f, 0.0f, 0.0f};
     float dt_=0.001;
+    float alpha_=0.0f;
     void decode(void);
     void calc(void);
     void sensorDataTransform(void);
-    void getEulerAngles(void);
+    void getGyroAngles(void);
+    void getAccAngles(void);
+    void complementaryFilter(void);
 
 };
 

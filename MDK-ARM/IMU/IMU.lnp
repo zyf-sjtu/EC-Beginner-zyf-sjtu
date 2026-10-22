@@ -1,6 +1,5 @@
 --cpu=Cortex-M4.fp.sp
 "imu\startup_stm32f407xx.o"
-"imu\user_code.o"
 "imu\main.o"
 "imu\gpio.o"
 "imu\spi.o"
@@ -9,6 +8,7 @@
 "imu\stm32f4xx_hal_msp.o"
 "imu\callback.o"
 "imu\imu.o"
+"imu\bmi088.o"
 "imu\stm32f4xx_hal_spi.o"
 "imu\stm32f4xx_hal_rcc.o"
 "imu\stm32f4xx_hal_rcc_ex.o"

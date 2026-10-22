@@ -1,7 +1,7 @@
 //
 // Created by zyfsj on 2026/10/18.
 
-#include "user_code.h"
+#include "bmi088.h"
 #include "main.h"
 #include "spi.h"
 

@@ -1,7 +1,7 @@
 //
 // Created by zyfsj on 2026/10/20.
 //
-#include "user_code.h"
+#include "bmi088.h"
 #include "imu.h"
 #ifndef IMU_CALLBACK_H
 #define IMU_CALLBACK_H

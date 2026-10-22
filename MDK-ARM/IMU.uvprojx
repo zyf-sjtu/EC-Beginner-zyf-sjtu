@@ -395,11 +395,6 @@
           <GroupName>Application/User/Core</GroupName>
           <Files>
             <File>
-              <FileName>user_code.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\User_code\user_code.cpp</FilePath>
-            </File>
-            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/main.c</FilePath>
@@ -438,6 +433,11 @@
               <FileName>imu.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\User_code\imu.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>bmi088.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\User_code\bmi088.cpp</FilePath>
             </File>
           </Files>
         </Group>
